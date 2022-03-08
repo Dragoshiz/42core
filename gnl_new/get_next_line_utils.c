@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dimbrea <dimbrea@student.42wolfsburg.de>   +#+  +:+       +#+        */
+/*   By: dimbrea <dimbrea@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/04 16:31:36 by dimbrea           #+#    #+#             */
-/*   Updated: 2022/03/06 22:11:06 by dimbrea          ###   ########.fr       */
+/*   Updated: 2022/03/08 17:29:58 by dimbrea          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ size_t	ft_strlen(const char *str)
 
 char	*ft_strchr(char *buffer, char c)
 {
+	if (!buffer)
+		return (NULL);
 	while (*buffer)
 	{
 		if (*buffer == c)
@@ -41,7 +43,11 @@ char	*ft_strjoin(char *save, char *buffer)
 	int		i;
 	int		j;
 
-	p = malloc(sizeof(char) * (ft_strlen(save) + ft_strlen(buffer)) + 1);
+	if (!save)
+		save = ft_calloc(1, sizeof(char));
+	if (!save || !buffer)
+		return (NULL);
+	p = ft_calloc((ft_strlen(save) + ft_strlen(buffer)) + 1, sizeof(char));
 	if (p == NULL)
 		return (NULL);
 	i = 0;
@@ -57,7 +63,7 @@ char	*ft_strjoin(char *save, char *buffer)
 		i++;
 		j++;
 	}
-	p[i] = '\0';
+	// p[i] = '\0';
 	free(save);
 	return (p);
 }

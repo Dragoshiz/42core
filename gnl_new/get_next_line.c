@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dimbrea <dimbrea@student.42wolfsburg.de>   +#+  +:+       +#+        */
+/*   By: dimbrea <dimbrea@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/04 16:31:38 by dimbrea           #+#    #+#             */
-/*   Updated: 2022/03/06 22:24:59 by dimbrea          ###   ########.fr       */
+/*   Updated: 2022/03/08 16:53:27 by dimbrea          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,18 @@ char	*ft_read_n_save(int fd, char *save)
 	if (!buffer)
 		return (NULL);
 	readval = 1;
-	while (!ft_strchr(buffer, '\n') && readval != 0)
+	while (!ft_strchr(save, '\n') && readval != 0)
 	{
-		save = ft_strjoin(save, buffer);
 		readval = read(fd, buffer, BUFFER_SIZE);
-	}
-	if (ft_strchr(buffer, '\n') && readval != 0)
+		if(readval == 0)
+			break;
+		if (readval == -1)
+		{
+			free(buffer);
+			return (NULL);
+		}
 		save = ft_strjoin(save, buffer);
+	}
 	free(buffer);
 	return (save);
 }
@@ -42,7 +47,7 @@ char	*ft_get_line(char *save)
 	i = 0;
 	while (save[i] && save[i] != '\n')
 		i++;
-	line = ft_calloc(i + 1, sizeof(char));
+	line = ft_calloc(i + 2, sizeof(char));
 	if (!line)
 		return (NULL);
 	i = 0;
@@ -56,7 +61,6 @@ char	*ft_get_line(char *save)
 		line[i] = save[i];
 		i++;
 	}
-	// line[i] = '\0';
 	return (line);
 }
 
@@ -76,7 +80,7 @@ char	*ft_update_save(char *save)
 		free(save);
 		return (NULL);
 	}
-	temp = ft_calloc((ft_strlen(save) - i), sizeof(char));
+	temp = ft_calloc((ft_strlen(save) - i + 1), sizeof(char));
 	if (!temp)
 		return (NULL);
 	j = 0;
@@ -90,10 +94,11 @@ char	*get_next_line(int fd)
 	static char	*save;
 	char		*line;
 
-	save = ft_calloc(1, sizeof(char));
-	if (!save)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	save = ft_read_n_save(fd, save);
+	if (!save)
+		return (NULL);
 	line = ft_get_line(save);
 	save = ft_update_save(save);
 	return (line);
@@ -106,14 +111,14 @@ int	main(void)
 	int	i;
 	char *hi;
 	
-	fd = open("test", O_RDONLY);
+	fd = open("gnlTester/files/43_no_nl", O_RDONLY);
 	i = 0;
-	while(i++ <7)
+	while(i++ <= 1)
 	{	
-		hi = get_next_line(fd);
-		printf("%s", hi);
+		printf("%s", hi  = get_next_line(fd));
+		// free(hi);
+
 	}
-	free(hi);
 	return (0);
 }
 	
